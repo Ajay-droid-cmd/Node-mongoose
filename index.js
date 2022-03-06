@@ -5,24 +5,40 @@ const connect = mongoose.connect(url);
 
 connect.then((db)=>{
     console.log("Connected to the server")
-
-     Dishes.create({
-        name : 'Uthapizza',
-        description : 'Test'    
+    Dishes.create({
+        name: 'Uthssappizza',
+        description: 'test'
     })
-    .then((dish)=>{
+    .then((dish) => {
         console.log(dish);
 
-        return Dishes.find({}).exec();
+        return Dishes.findByIdAndUpdate(dish._id, {
+            $set: { description: 'Updated test'}
+        },{ 
+            new: true 
+        })
+        .exec();
     })
-    .then((dishes)=>{
-        console.log(dishes); 
+    .then((dish) => {
+        console.log(dish);
+
+        dish.comments.push({
+            rating: 5,
+            comment: 'I\'m getting a sinking feeling!',
+            author: 'Leonardo di Carpaccio'
+        });
+
+        return dish.save();
+    })
+    .then((dish) => {
+        console.log(dish);
+
         return Dishes.remove({});
     })
-    .then(()=>{
+    .then(() => {
         return mongoose.connection.close();
     })
-    .catch((error)=>{
-        console.log(error);
+    .catch((err) => {
+        console.log(err);
     });
 });
